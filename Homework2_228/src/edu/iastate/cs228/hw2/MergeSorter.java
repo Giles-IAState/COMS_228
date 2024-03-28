@@ -2,7 +2,8 @@ package edu.iastate.cs228.hw2;
 
 import java.io.FileNotFoundException;
 import java.lang.NumberFormatException; 
-import java.lang.IllegalArgumentException; 
+import java.lang.IllegalArgumentException;
+import java.util.Arrays;
 import java.util.InputMismatchException;
 
 /**
@@ -29,7 +30,7 @@ public class MergeSorter extends AbstractSorter
 	 */
 	public MergeSorter(Point[] pts) 
 	{
-		super();
+		super(pts);
 		algorithm = "merge sort";
 		// TODO  
 	}
@@ -42,7 +43,8 @@ public class MergeSorter extends AbstractSorter
 	@Override 
 	public void sort()
 	{
-		// TODO 
+		mergeSortRec(points);
+		roundTime = System.nanoTime();
 	}
 
 	
@@ -55,10 +57,54 @@ public class MergeSorter extends AbstractSorter
 	 */
 	private void mergeSortRec(Point[] pts)
 	{
-		
+		if (pts.length <= 1) {
+			return;
+		}
+
+		int midpoint = pts.length / 2;
+
+		Point[] leftPart = Arrays.copyOf(pts, midpoint);
+		Point[] rightPart = Arrays.copyOfRange(pts, midpoint, pts.length);
+
+		mergeSortRec(leftPart);
+		mergeSortRec(rightPart);
+
+		merge(leftPart, rightPart, pts);
 	}
 
-	
-	// Other private methods if needed ...
+	private static void merge(Point[] a, Point[] b, Point[] c) {
+
+		int leftPos = 0;
+		int rightPos = 0;
+		int mergePos = 0;
+
+		while(leftPos < a.length && rightPos < b.length) {
+			if (a[leftPos].compareTo(b[rightPos]) < 0) {
+				c[mergePos] = a[leftPos];
+				leftPos++;
+				mergePos++;
+			}
+			else {
+				c[mergePos] = b[rightPos];
+				rightPos++;
+				mergePos++;
+			}
+		}
+
+ 		while (leftPos < a.length) {
+
+			c[mergePos] = a[leftPos];
+			leftPos++;
+			mergePos++;
+		}
+
+		while (rightPos < b.length) {
+			c[mergePos] = b[rightPos];
+			rightPos++;
+			mergePos++;
+		}
+
+	}
+
 
 }

@@ -6,8 +6,13 @@ package edu.iastate.cs228.hw2;
  *
  */
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.FileWriter;
+import java.util.Arrays;
 import java.util.InputMismatchException;
+import java.util.Scanner;
 
 
 /**
@@ -52,7 +57,46 @@ public class PointScanner
 	 */
 	protected PointScanner(String inputFileName, Algorithm algo) throws FileNotFoundException, InputMismatchException
 	{
-		// TODO
+		sortingAlgorithm = algo;
+
+		File inputFile = new File(inputFileName);
+		Scanner scanFile = new Scanner(inputFile);
+		Scanner scanLines = new Scanner(scanFile.nextLine());
+		points = new Point[0];
+		int i = 0;
+
+		while(scanFile.hasNextLine()) {
+
+			int x;
+			int y = 51; //used to guarantee that y will be initialized to a value.
+
+			while(scanLines.hasNextInt()) {
+
+
+				x = scanLines.nextInt();
+
+				if(scanLines.hasNextInt()){
+					y = scanLines.nextInt();
+				}
+				else {
+					scanLines = new Scanner(scanFile.nextLine());
+					y = scanLines.nextInt();
+				}
+				points = Arrays.copyOf(points, points.length + 1);
+				this.points[i] = new Point(x,y);
+				i++;
+
+			}
+
+			if(y != 51) {
+				scanLines = new Scanner(scanFile.nextLine());
+			}
+
+		}
+
+		scanFile.close();
+		scanLines.close();
+
 	}
 
 	
@@ -68,23 +112,48 @@ public class PointScanner
 	 * @param algo
 	 * @return
 	 */
-	public void scan()
-	{
-		// TODO  
-		AbstractSorter aSorter; 
-		
-		// create an object to be referenced by aSorter according to sortingAlgorithm. for each of the two 
-		// rounds of sorting, have aSorter do the following: 
-		// 
-		//     a) call setComparator() with an argument 0 or 1. 
+	public void scan() throws IOException {
+		// create an object to be referenced by aSorter according to sortingAlgorithm. for each of the two
+		// rounds of sorting, have aSorter do the following:
 		//
-		//     b) call sort(). 		
-		// 
+		//     a) call setComparator() with an argument 0 or 1.
+		//
+		//     b) call sort().
+		//
 		//     c) use a new Point object to store the coordinates of the medianCoordinatePoint
 		//
 		//     d) set the medianCoordinatePoint reference to the object with the correct coordinates.
 		//
-		//     e) sum up the times spent on the two sorting rounds and set the instance variable scanTime. 
+		//     e) sum up the times spent on the two sorting rounds and set the instance variable scanTime.
+		AbstractSorter aSorter;
+
+		if (sortingAlgorithm == Algorithm.SelectionSort) {
+			aSorter = new SelectionSorter(points);
+		}
+		else if (sortingAlgorithm == Algorithm.InsertionSort) {
+			aSorter = new InsertionSorter(points);
+		}
+		else if (sortingAlgorithm == Algorithm.MergeSort) {
+			aSorter = new MergeSorter(points);
+		}
+		else {
+			aSorter = new QuickSorter(points);
+		}
+
+		aSorter.setComparator(0);
+		aSorter.sort();
+		scanTime += aSorter.roundTime;
+		medianCoordinatePoint = aSorter.getMedian();
+		writeMCPToFile();
+
+		aSorter.setComparator(1);
+		aSorter.sort();
+		scanTime += aSorter.roundTime;
+		medianCoordinatePoint = aSorter.getMedian();
+		writeMCPToFile();
+
+		points = aSorter.points;
+
 		
 	}
 	
@@ -102,8 +171,8 @@ public class PointScanner
 	 */
 	public String stats()
 	{
-		return null; 
-		// TODO 
+		String output = sortingAlgorithm + "   " + points.length + "      " + scanTime;
+		return output;
 	}
 	
 	
@@ -114,8 +183,13 @@ public class PointScanner
 	@Override
 	public String toString()
 	{
-		return null; 
-		// TODO
+//		String output = "";
+//        for (int i = 0; i < points.length; i++) {
+//            output += points[i].toString();
+//        }
+//		return output;
+
+		return "MCP: " + medianCoordinatePoint;
 	}
 
 	
@@ -127,9 +201,14 @@ public class PointScanner
 	 * 
 	 * @throws FileNotFoundException
 	 */
-	public void writeMCPToFile() throws FileNotFoundException
+	public void writeMCPToFile() throws FileNotFoundException, IOException
 	{
-		// TODO 
+		File outputFile = new File("output_file.txt");
+		FileWriter writer = new FileWriter("output_file.txt");
+
+		writer.write(toString());
+		writer.close();
+
 	}	
 
 	

@@ -31,7 +31,7 @@ public class QuickSorter extends AbstractSorter
 	 */
 	public QuickSorter(Point[] pts)
 	{
-		super();
+		super(pts);
 		algorithm = "quick sort";
 		// TODO 
 	}
@@ -44,7 +44,8 @@ public class QuickSorter extends AbstractSorter
 	@Override 
 	public void sort()
 	{
-		// TODO 
+		// TODO
+		roundTime = System.nanoTime();
 	}
 	
 	
@@ -56,7 +57,13 @@ public class QuickSorter extends AbstractSorter
 	 */
 	private void quickSortRec(int first, int last)
 	{
-		// TODO
+		if (first >= last) {
+			return;
+		}
+		int firstEnd = partition(first, last);
+
+		quickSortRec(first, firstEnd + 1);
+		quickSortRec(firstEnd + 1, last);
 	}
 	
 	
@@ -69,8 +76,19 @@ public class QuickSorter extends AbstractSorter
 	 */
 	private int partition(int first, int last)
 	{
-		// TODO 
-		return 0; 
+		int i = first - 1;
+
+		Point pivot = points[last];
+		for (int j = first; j < last; j++) {
+			if(points[j].compareTo(pivot) < 0) {
+				i++;
+				swap(i, j);
+			}
+		}
+
+		swap(i + 1, last);
+
+		return i + 1;
 	}	
 		
 

@@ -2,7 +2,7 @@ package edu.iastate.cs228.hw2;
 
 /**
  *  
- * @author
+ * @author Cole Giles
  *
  */
 
@@ -15,7 +15,8 @@ package edu.iastate.cs228.hw2;
  */
 
 import java.io.FileNotFoundException;
-import java.util.Scanner; 
+import java.io.IOException;
+import java.util.Scanner;
 import java.util.Random; 
 
 
@@ -28,9 +29,8 @@ public class CompareSorters
 	 * 
 	 * @param args
 	 **/
-	public static void main(String[] args) throws FileNotFoundException
-	{		
-		// TODO 
+	public static void main(String[] args) throws IOException {
+
 		// 
 		// Conducts multiple rounds of comparison of four sorting algorithms.  Within each round, 
 		// set up scanning as follows: 
@@ -42,8 +42,50 @@ public class CompareSorters
 		//       PointScanner objects, which are created using four different values  
 		//       of the Algorithm type:  SelectionSort, InsertionSort, MergeSort and QuickSort. 
 		// 
-		// 	
-		PointScanner[] scanners = new PointScanner[4]; 
+		//
+		PointScanner[] scanners = new PointScanner[4];
+
+		Scanner in = new Scanner(System.in);
+		System.out.print("Keys: 1 (random integers)  2 (file input)  3 (exit)");
+		while (in.nextInt() != 3) {
+			int trial = 1;
+			System.out.print("Trial: " + trial + "\n ");
+			if (in.nextInt() == 1) {
+				Random rand = new Random();
+				System.out.print("Enter a number of random points: ");
+
+				Point[] points = generateRandomPoints(in.nextInt(), rand);
+
+				scanners[0] = new PointScanner(points, Algorithm.SelectionSort);
+				scanners[1] = new PointScanner(points, Algorithm.InsertionSort);
+				scanners[2] = new PointScanner(points, Algorithm.MergeSort);
+				scanners[3] = new PointScanner(points, Algorithm.QuickSort);
+			}
+			else {
+				System.out.print("Points from a file: ");
+				System.out.print("File name: ");
+				String input = in.next();
+
+				scanners[0] = new PointScanner(input, Algorithm.SelectionSort);
+				scanners[1] = new PointScanner(input, Algorithm.InsertionSort);
+				scanners[2] = new PointScanner(input, Algorithm.MergeSort);
+				scanners[3] = new PointScanner(input, Algorithm.QuickSort);
+			}
+
+			for (int i = 0; i < scanners.length; i++) {
+				scanners[i].scan();
+			}
+
+			System.out.print("algorithm   size    time (ns) \n----------------------------------\n");
+			for (int j = 0; j < scanners.length; j++) {
+				System.out.println(scanners[j].stats());
+			}
+			System.out.print("----------------------------------");
+
+			trial++;
+		}
+
+
 		
 		// For each input of points, do the following. 
 		// 
@@ -73,8 +115,12 @@ public class CompareSorters
 	 */
 	public static Point[] generateRandomPoints(int numPts, Random rand) throws IllegalArgumentException
 	{
-		return null;
-		// TODO 
+		Point[] temp = new Point[numPts];
+		for(int i = 0; i < temp.length; i++) {
+			temp[i] = new Point(rand.nextInt(101) - 50, rand.nextInt(101) - 50);
+		}
+		return temp;
+
 	}
 	
 }

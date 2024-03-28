@@ -30,9 +30,8 @@ public class InsertionSorter extends AbstractSorter
 	 */
 	public InsertionSorter(Point[] pts) 
 	{
-		super();
+		super(pts);
 		algorithm = "insertion sort";
-		// TODO 
 	}	
 
 	
@@ -42,6 +41,15 @@ public class InsertionSorter extends AbstractSorter
 	@Override 
 	public void sort()
 	{
-		// TODO 
+		for(int i = 1; i < points.length; i++) {
+			int j = i;
+
+			while (j > 0 && points[j].compareTo(points[j-1]) < 0) {
+
+				swap(j, j-1);
+				j--;
+			}
+		}
+		roundTime = System.nanoTime();
 	}		
 }

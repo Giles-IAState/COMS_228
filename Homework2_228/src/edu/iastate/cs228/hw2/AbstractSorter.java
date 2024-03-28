@@ -26,11 +26,10 @@ public abstract class AbstractSorter
 	protected String algorithm = null; // "selection sort", "insertion sort", "merge sort", or
 	                                   // "quick sort". Initialized by a subclass constructor.
 		 
-	protected Comparator<Point> pointComparator = null;  
-	
-	
+	protected Comparator<Point> pointComparator = null;
+
 	// Add other protected or private instance variables you may need. 
-	
+	protected long roundTime;
 
 	protected AbstractSorter()
 	{
@@ -47,10 +46,9 @@ public abstract class AbstractSorter
 	 */
 	protected AbstractSorter(Point[] pts) throws IllegalArgumentException
 	{
-		for (int i = 0; i < pts.length; i++) {
-			points[i] = pts[i];
-		}
-		//TODO
+		getPoints(pts);
+
+
 	}
 
 		
@@ -73,7 +71,17 @@ public abstract class AbstractSorter
 	 */
 	public void setComparator(int order) throws IllegalArgumentException
 	{
-		// TODO 
+		if(order == 0) {
+
+			Point.setXorY(true);
+			pointComparator = Point::compareTo;
+		}
+		else {
+
+			Point.setXorY(false);
+			pointComparator = Point::compareTo;
+		}
+
 	}
 
 	
@@ -104,7 +112,8 @@ public abstract class AbstractSorter
 	 */
 	public void getPoints(Point[] pts)
 	{
-		// TODO 
+		points = new Point[pts.length];
+		points = pts;
 	}
 	
 
@@ -116,6 +125,8 @@ public abstract class AbstractSorter
 	 */
 	protected void swap(int i, int j)
 	{
-		// TODO 
-	}	
+		Point temp = points[i];
+		points[i] = points[j];
+		points[j] = temp;
+	}
 }
